@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <h1 style="margin-left:5%">Office</h1>
+
+    <form action="#" id="officeform">
+        {%csrf_token%}
+        <!-- one of two methods to pevernt form submision -->
+
+        <div style="width:15%; margin-left:10%">{{officeform}}
+            <br>
+            <input type="submit" value="Save Office">
+        </div>
+    </form>
+
+    <form action="javascript:voild(0)" id="employeeform">
+        <!-- tow of two methods to pevernt form submision -->
+        <hr>
+
+        <h1 style="margin-left:5%">Employee</h1>
+        <div style="width:15%; margin-left:10%"> {{employeeform}}
+            <br>
+            <input type="submit" value="Save Employee">
+        </div>
+    </form>
+
+</body>
+
+</html>
+
+<script>
+    $(document).ready(function () {
+
+    })
+
+
+    function officeformsubmit(event) {
+        //  one of two methods to pevernt form submision 
+        event.preventDefault()
+        const valuesinarry = $(this).serializeArray()
+        const body = {}
+
+        //valuesinarry.forEach(e=>{
+        //body[e.name]=e.value
+        //})
+
+        valuesinarry.reduce((body, e) => {
+            body[e.name] = e.value
+            return body
+        }, body)
+
+        $.ajax({
+            method: "POST",
+            url: "/office/",
+            data: body
+        })
+        .done(function(respons){
+            console.log(respons)
+            event.target.reset()
+            alert("Office Saved")
+        })
+        .fail(function(response){
+            console.log(response)
+        })
+
+    };
+
+    function employeeformsubmit() {
+
+    };
+
+    $('#officeform').submit(officeformsubmit);
+
+    $('#employeeform').submit(employeeformsubmit);
+
+
+</script>
