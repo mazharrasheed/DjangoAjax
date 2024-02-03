@@ -64,6 +64,8 @@
                 <td>E-mail</td>
                 <td>Gender</td>
                 <td>Office</td>
+                <td>Location</td>
+                <td>Status</td>
               </tr>
             </thead>
             <tbody id="emptbl"></tbody>
@@ -112,13 +114,31 @@
       const gender = document.createElement("TD");
       gender.innerHTML = emp.gender == "M" ? "Male" : Female;
       const office = document.createElement("TD");
-      office.innerHTML = emp.office;
+      office.innerHTML = emp.office.name;
+      const location = document.createElement("TD");
+      location.innerHTML = emp.office.locations;
+      const activecol = document.createElement("TD");
+      const check=document.createElement('input')
+      check.type='checkbox'
+
+      if (emp.active){
+        check=checked
+      }
+      activecol.appendChild(check)
+
+      check.onchanage=function(){
+        emp.active=check.checked
+        console.log(emp)
+      }
       row.appendChild(count);
       row.appendChild(fname);
       row.appendChild(lname);
       row.appendChild(email);
       row.appendChild(gender);
       row.appendChild(office);
+      row.appendChild(location);
+      row.appendChild(activecol);
+
     });
   }
 

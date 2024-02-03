@@ -1,5 +1,6 @@
 from django.db import models
 from django.forms import Form, ModelForm
+from django.forms.models import model_to_dict
 
 # Create your models here.
 
@@ -10,6 +11,9 @@ class Office(models.Model):
 
     def __str__(self):
         return self.name
+
+    def natural_key(self):
+        return(model_to_dict(self))
 
 class Employee(models.Model):
     genders=[
@@ -22,6 +26,7 @@ class Employee(models.Model):
     email=models.EmailField()
     gender=models.CharField(max_length=20,choices=genders)
     office=models.ForeignKey(Office,on_delete=models.CASCADE)
+    active=models.BooleanField(null=True)
 
     def __str__(self):
         return self.firstname

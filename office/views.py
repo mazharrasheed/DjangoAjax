@@ -23,46 +23,33 @@ def employeecrud(request):
     if request.method=='POST':
         officeform=Employeeform(request.POST)
         employee=officeform.save()
-        return JsonResponse(model_to_dict(employee),safe=False)
+        office=employee.office
+        officejson=model_to_dict(office)
+        response=model_to_dict(employee)
+        response['office']=officejson
+        return JsonResponse(response,safe=False)
     
 def getalloffices(request):
-
     offices=Office.objects.all()
     data=serializers.serialize('json',offices)
     return JsonResponse(data,safe=False)
 
-
 def showoffices(request):
     officeform=Officeform()
-    
     data={'officeform':officeform,}
-
     return render(request ,"office.html",data)
 
 def getallemployees(request):
 
     employees=Employee.objects.all() 
-    empl=Employee.objects.all().values()
-
-    for emp in empl:  
-        print(emp['office_id'])
-        print(Office.objects.filter(id=emp['office_id']) ) 
-    data=serializers.serialize('json',employees)
+    data=serializers.serialize('json',employees,use_natural_foreign_keys=True)
     return JsonResponse(data,safe=False)
+
 
 
 def showemployees(request):
-   
     employeeform=Employeeform()
     data={'employeeform':employeeform}
-
     return render(request ,"employee.html",data)
 
-def getallemployees(request):
-
-    employees=Employee.objects.all()
-    data=serializers.serialize('json',employees)
-    return JsonResponse(data,safe=False)
-
-    pass
 

@@ -85,6 +85,7 @@
       url: "/offices/",
     })
       .done(response => {
+       
         const tempoffices = JSON.parse(response)
         officeslist = tempoffices
         officeslist = officeslist.map(e => e.fields)
