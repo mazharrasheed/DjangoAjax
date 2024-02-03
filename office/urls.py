@@ -22,5 +22,11 @@ from office import views
 urlpatterns = [
    
     path('', views.index,name="index"),
+    path('index/', views.index,name="index"),
     path('office/', views.officecrud,name="officecrud"),
+    path('employee/', views.employeecrud,name="officecrud"),
+    path('offices/', views.getalloffices,name="offices"),
+    path('officespage/', views.showoffices,name="officespage"),
+    path('employees/', views.getallemployees,name="employees"),
+    path('employeespage/', views.showemployees,name="employeespage"),
 ]
