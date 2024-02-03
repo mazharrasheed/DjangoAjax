@@ -23,4 +23,7 @@ urlpatterns = [
    
     path('', views.index,name="index"),
     path('office/', views.officecrud,name="officecrud"),
+    path('employee/', views.employeecrud,name="officecrud"),
+    path('offices/', views.getalloffices,name="offices"),
+    path('employees/', views.getallemployees,name="employees"),
 ]
