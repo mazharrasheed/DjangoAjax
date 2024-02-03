@@ -31,6 +31,7 @@ def getalloffices(request):
     data=serializers.serialize('json',offices)
     return JsonResponse(data,safe=False)
 
+
 def showoffices(request):
     officeform=Officeform()
     
@@ -56,3 +57,12 @@ def showemployees(request):
     data={'employeeform':employeeform}
 
     return render(request ,"employee.html",data)
+
+def getallemployees(request):
+
+    employees=Employee.objects.all()
+    data=serializers.serialize('json',employees)
+    return JsonResponse(data,safe=False)
+
+    pass
+
