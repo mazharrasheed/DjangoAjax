@@ -16,8 +16,8 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
+      crossorigin="anonymous"/>
+
   </head>
   <body>
 
@@ -77,8 +77,9 @@
 </html>
 
 <script>
-  officeslist = [];
-  emplist = [];
+  
+  var emplist = [];
+  var csrfmiddlewaretoken="{{csrf_token}}"
   $(document).ready(function () {
     getallemployees();
   });
@@ -91,7 +92,13 @@
     }).done((response) => {
       const tempemp = JSON.parse(response);
       emplist = tempemp;
-      emplist = emplist.map((e) => e.fields);
+      emplist = emplist.map((e) => {
+        const emp={
+          ...e.fields,
+          id:e.pk
+        }
+        return emp
+      });
       renderemptable();
     });
   }
@@ -112,7 +119,7 @@
       const email = document.createElement("TD");
       email.innerHTML = emp.email;
       const gender = document.createElement("TD");
-      gender.innerHTML = emp.gender == "M" ? "Male" : Female;
+      gender.innerHTML = emp.gender == "M" ? "Male" : 'Female';
       const office = document.createElement("TD");
       office.innerHTML = emp.office.name;
       const location = document.createElement("TD");
@@ -122,14 +129,36 @@
       check.type='checkbox'
 
       if (emp.active){
-        check=checked
+        check.checked='checked'
       }
       activecol.appendChild(check)
 
-      check.onchanage=function(){
+      check.onchange=function(){
         emp.active=check.checked
-        console.log(emp)
+        
+        const body={
+          ...emp,
+          office:emp.office.id,
+          csrfmiddlewaretoken,
+        }
+
+        const csrftoken = getCookie('csrftoken');
+        
+        $.ajax({
+          headers: {'X-CSRFToken': csrftoken},
+          method: "PUT",
+          url: "/employee/",
+          data: JSON.stringify(body),
+        })
+          .done(function (response) {
+            console.log(response);
+            
+          })
+          .fail(function (response) {
+            console.log(response);
+          });   
       }
+
       row.appendChild(count);
       row.appendChild(fname);
       row.appendChild(lname);
@@ -141,6 +170,23 @@
 
     });
   }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 
   function employeeformsubmit(event) {
     //  one of two methods to pevernt form submision

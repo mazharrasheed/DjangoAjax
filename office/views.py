@@ -1,7 +1,8 @@
 from django.core import serializers
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse,QueryDict
 from django.shortcuts import redirect, render
+import json
 
 from .models import Employee, Employeeform, Office, Officeform
 
@@ -28,6 +29,12 @@ def employeecrud(request):
         response=model_to_dict(employee)
         response['office']=officejson
         return JsonResponse(response,safe=False)
+    if request.method=='PUT':
+        data=json.loads(request.body)
+        data['offce']=Office(id=data.get('office'))
+        print(data)
+        res={}
+        return JsonResponse(res)
     
 def getalloffices(request):
     offices=Office.objects.all()
