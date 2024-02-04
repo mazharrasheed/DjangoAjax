@@ -30,16 +30,18 @@
               <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                      <a class="nav-link active" aria-current="page" href="/index/">Home</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="/officespage/">Office Page</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="/employeespage/">Employee Page</a>
-                  </li>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/index/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/officespage/">Office Page</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/employeespage/">Employee Page</a>
+              </li>
+            </ul>
+          </div>
   </nav>
 
     <div class="container">
@@ -77,8 +79,10 @@
 </html>
 
 <script>
-  officeslist = [];
-  emplist = [];
+ 
+  let emplist = [];  
+  var csrftoken="{{ csrf_token }}"
+
   $(document).ready(function () {
     getallemployees();
   });
@@ -88,10 +92,17 @@
     $.ajax({
       method: "GET",
       url: "/employees/",
+      csrftoken:csrftoken,
     }).done((response) => {
       const tempemp = JSON.parse(response);
       emplist = tempemp;
-      emplist = emplist.map((e) => e.fields);
+      emplist = emplist.map((e) => {
+        const emp={
+          ...e.fields,
+          id:e.pk
+        }
+        return emp
+      });
       renderemptable();
     });
   }
@@ -112,7 +123,7 @@
       const email = document.createElement("TD");
       email.innerHTML = emp.email;
       const gender = document.createElement("TD");
-      gender.innerHTML = emp.gender == "M" ? "Male" : Female;
+      gender.innerHTML = emp.gender == "M" ? "Male":"Female";
       const office = document.createElement("TD");
       office.innerHTML = emp.office.name;
       const location = document.createElement("TD");
@@ -122,13 +133,33 @@
       check.type='checkbox'
 
       if (emp.active){
-        check=checked
+        check.checked='checked'
       }
       activecol.appendChild(check)
 
-      check.onchanage=function(){
+      check.onchange=function(){
         emp.active=check.checked
-        console.log(emp)
+        const body={
+          ...emp,
+          office:emp.office.id 
+        }
+        const csrftoken = getCookie('csrftoken');
+      
+        $.ajax({
+          headers: {'X-CSRFToken': csrftoken},
+          method: "PUT",
+          url: "/employee/",
+          data:JSON.stringify(body),
+        })
+          .done(function (response) {
+            console.log(response);
+       
+          })
+          .fail(function (response) {
+            console.log(response);
+          });
+
+
       }
       row.appendChild(count);
       row.appendChild(fname);
@@ -141,6 +172,23 @@
 
     });
   }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 
   function employeeformsubmit(event) {
     //  one of two methods to pevernt form submision
