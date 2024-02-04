@@ -47,7 +47,7 @@ def employeecrud(request):
 def getalloffices(request):
     offices=Office.objects.all()
     data=serializers.serialize('json',offices)
-    return JsonResponse({data},safe=False)
+    return JsonResponse(data,safe=False)
 
 def showoffices(request):
     officeform=Officeform()
